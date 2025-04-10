@@ -7,7 +7,8 @@ public class NoSpacesValidator implements ConstraintValidator<NoSpaces, String> 
 
 
     @Override
-    public void initialize(NoSpaces constraintAnnotation) {}
+    public void initialize(NoSpaces constraintAnnotation) {
+    }
 
     // Метод для валидации строки
     @Override

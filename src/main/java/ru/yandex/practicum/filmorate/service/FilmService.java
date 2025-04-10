@@ -42,15 +42,15 @@ public class FilmService {
             log.debug("Описание фильма изменено с '{}' на '{}'", oldFilm.getDescription(), film.getDescription());
             oldFilm.setDescription(film.getDescription());
         }
-        if(!film.getName().equals(oldFilm.getName())) {
+        if (!film.getName().equals(oldFilm.getName())) {
             log.debug("Название фильма изменено с '{}' на '{}'", oldFilm.getName(), film.getName());
             oldFilm.setName(film.getName());
         }
-        if(film.getDuration() != oldFilm.getDuration()) {
+        if (film.getDuration() != oldFilm.getDuration()) {
             log.debug("Продолжительность фильма изменена с '{}' на '{}'", oldFilm.getDuration(), film.getDuration());
             oldFilm.setDuration(film.getDuration());
         }
-        if(film.getReleaseDate() != null && !film.getReleaseDate().equals(oldFilm.getReleaseDate())) {
+        if (film.getReleaseDate() != null && !film.getReleaseDate().equals(oldFilm.getReleaseDate())) {
             log.debug("Дата релиза фильма изменена с '{}' на '{}'", oldFilm.getReleaseDate(), film.getReleaseDate());
             oldFilm.setReleaseDate(film.getReleaseDate());
         }
