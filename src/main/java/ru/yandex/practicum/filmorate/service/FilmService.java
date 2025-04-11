@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,10 +15,10 @@ import java.util.List;
 @Slf4j
 public class FilmService {
 
-    List<Film> films;
+    private List<Film> films;
     private static Long idCounter = 1L;
 
-    public Film createFilm(@Valid Film film) {
+    public Film createFilm(Film film) {
         log.info("Создание фильма: {}", film.getName());
         if (film.getId() == null) {
             film.setId(idCounter++);
@@ -29,7 +28,7 @@ public class FilmService {
         return film;
     }
 
-    public Film updateFilm(@Valid Film film) {
+    public Film updateFilm(Film film) {
         log.info("Обновление фильма с id: {}", film.getId());
         if (!films.contains(film)) {
             log.error("Фильм с id: {} не найден", film.getId());

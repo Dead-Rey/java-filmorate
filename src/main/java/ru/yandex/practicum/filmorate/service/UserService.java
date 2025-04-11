@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +16,10 @@ import java.util.List;
 @Slf4j
 public class UserService {
 
-    List<User> users;
+    private List<User> users;
     private static Long idCounter = 1L;
 
-    public User createUser(@Valid User user) {
+    public User createUser(User user) {
         log.info("Создание пользователя: {}", user.getLogin());
         for (User u : users) {
             if (u.getEmail().equals(user.getEmail())) {
@@ -44,7 +43,7 @@ public class UserService {
         return user;
     }
 
-    public User updateUser(@Valid User user) {
+    public User updateUser(User user) {
         log.info("Обновление пользователя с id: {}", user.getId());
         if (!users.contains(user)) {
             log.error("Пользователя с id: {} не существует", user.getId());
