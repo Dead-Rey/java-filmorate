@@ -97,7 +97,7 @@ public class InMemoryUserStorage implements UserStorage {
     public User findUserById(Long id) {
         return users.stream().filter(user -> user.getId().equals(id))
                 .findFirst()
-                .orElseThrow(()-> new NotFoundException("Пользователь не найден"));
+                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
     }
 
     @Override
