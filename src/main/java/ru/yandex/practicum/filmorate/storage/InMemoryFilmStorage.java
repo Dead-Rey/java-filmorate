@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
+
 @Component
 @AllArgsConstructor
 @Getter
@@ -61,7 +62,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Film getFilmById(Long id) {
         return films.stream().filter(f -> f.getId().equals(id))
-                .findFirst()
-                .orElseThrow(()-> new NotFoundException("Фильм не найден"));
+                .findFirst().orElseThrow(()-> new NotFoundException("Фильм не найден"));
     }
 }
