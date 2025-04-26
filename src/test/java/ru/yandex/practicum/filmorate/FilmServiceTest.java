@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,31 +13,31 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FilmServiceTest {
 
-    private FilmService filmService;
+    private InMemoryFilmStorage filmStorage;
 
     @BeforeEach
     void setUp() {
-        filmService = new FilmService(new ArrayList<>());
+        filmStorage = new InMemoryFilmStorage(new ArrayList<>());
     }
 
     @Test
     void testCreateFilm_AssignsIdAndAddsToList() {
-        Film film = new Film(null, "Inception", "Mind-bending movie", LocalDate.of(2010, 7, 16), 148);
+        Film film = new Film(null,null, "Inception", "Mind-bending movie", LocalDate.of(2010, 7, 16), 148);
 
-        Film created = filmService.createFilm(film);
+        Film created = filmStorage.createFilm(film);
 
         assertNotNull(created.getId());
         assertEquals("Inception", created.getName());
-        assertEquals(1, filmService.getFilms().size());
+        assertEquals(1, filmStorage.getFilms().size());
     }
 
     @Test
     void testUpdateFilm_UpdatesFieldsCorrectly() {
-        Film film = new Film(null, "Old Name", "Old Description", LocalDate.of(2000, 1, 1), 100);
-        filmService.createFilm(film);
+        Film film = new Film(null, null, "Old Name", "Old Description", LocalDate.of(2000, 1, 1), 100);
+        filmStorage.createFilm(film);
 
-        Film updatedFilm = new Film(film.getId(), "New Name", "New Description", LocalDate.of(2001, 2, 2), 120);
-        Film result = filmService.updateFilm(updatedFilm);
+        Film updatedFilm = new Film(null, film.getId(), "New Name", "New Description", LocalDate.of(2001, 2, 2), 120);
+        Film result = filmStorage.updateFilm(updatedFilm);
 
         assertEquals("New Name", result.getName());
         assertEquals("New Description", result.getDescription());
@@ -47,17 +47,17 @@ class FilmServiceTest {
 
     @Test
     void testUpdateFilm_NotFound_ThrowsException() {
-        Film film = new Film(999L, "Non-existent", "Doesn't matter", LocalDate.of(1999, 1, 1), 90);
+        Film film = new Film(null,999L, "Non-existent", "Doesn't matter", LocalDate.of(1999, 1, 1), 90);
 
-        Exception exception = assertThrows(NotFoundException.class, () -> filmService.updateFilm(film));
+        Exception exception = assertThrows(NotFoundException.class, () -> filmStorage.updateFilm(film));
 
         assertEquals("Фильм не найден", exception.getMessage());
     }
 
     @Test
     void testCreateFilm_DoesNotOverrideGivenId() {
-        Film film = new Film(42L, "Film with ID", "Testing", LocalDate.of(2020, 5, 5), 90);
-        Film created = filmService.createFilm(film);
+        Film film = new Film(null,42L, "Film with ID", "Testing", LocalDate.of(2020, 5, 5), 90);
+        Film created = filmStorage.createFilm(film);
 
         assertEquals(42L, created.getId());
     }

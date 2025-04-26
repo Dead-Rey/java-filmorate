@@ -11,12 +11,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NoSpaces {
 
-
     String message() default "Поле не должно содержать пробелов";
 
-
     Class<?>[] groups() default {};
-
 
     Class<? extends Payload>[] payload() default {};
 }

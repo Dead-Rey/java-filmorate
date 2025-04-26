@@ -5,10 +5,12 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exeption.AlreadyExistsException;
-import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -16,76 +18,54 @@ import java.util.List;
 @Slf4j
 public class UserService {
 
-    private List<User> users;
-    private static Long idCounter = 1L;
+    private final UserStorage userStorage;
 
-    public User createUser(User user) {
-        log.info("Создание пользователя: {}", user.getLogin());
-        for (User u : users) {
-            if (u.getEmail().equals(user.getEmail())) {
-                log.error("Пользователь с email: {} уже существует", user.getEmail());
-                throw new AlreadyExistsException("Данный email уже зарегистрирован");
-            }
-            if (u.getLogin().equals(user.getLogin())) {
-                log.error("Пользователь с логином: {} уже существует", user.getLogin());
-                throw new AlreadyExistsException("Данный логин уже зарегистрирован");
-            }
-            if (user.getName() == null || user.getName().isBlank()) {
-                log.debug("Имя пользователя не введено. Использован логин: {}", user.getLogin());
-                user.setName(user.getLogin());
-            }
+    public void addFriend(Long userId, Long friendId) {
+        log.info("Попытка добавить друга с ID {} для пользователя с ID {}", friendId, userId);
+
+        if (userStorage.findUserById(userId).getFriends().contains(friendId)) {
+            log.warn("Пользователь с ID {} уже дружит с пользователем с ID {}", userId, friendId);
+            throw new AlreadyExistsException("Вы уже дружите с: " + userStorage.findUserById(friendId).getName());
         }
-        if (user.getId() == null) {
-            user.setId(idCounter++);
-        }
-        users.add(user);
-        log.info("Пользователь: {} успешно создан", user.getLogin());
-        return user;
+
+        Set<Long> friends = userStorage.findUserById(userId).getFriends();
+        friends.add(friendId);
+        userStorage.findUserById(userId).setFriends(friends);
+
+        Set<Long> friendOfFriend = userStorage.findUserById(friendId).getFriends();
+        friendOfFriend.add(userId);
+        userStorage.findUserById(friendId).setFriends(friendOfFriend);
+
+        log.info("Пользователь с ID {} и пользователь с ID {} теперь друзья", userId, friendId);
     }
 
-    public User updateUser(User user) {
-        log.info("Обновление пользователя с id: {}", user.getId());
-        if (!users.contains(user)) {
-            log.error("Пользователя с id: {} не существует", user.getId());
-            throw new NotFoundException("Пользователь не найден");
-        }
-        User oldUser = users.get(users.indexOf(user));
-        if (user.getBirthday() != null && !user.getBirthday().equals(oldUser.getBirthday())) {
-            log.debug("Дата рождения изменена с '{}' на '{}'", oldUser.getBirthday(), user.getBirthday());
-            oldUser.setBirthday(user.getBirthday());
-        }
-        if (user.getName() != null && !user.getName().equals(oldUser.getName())) {
-            if (user.getName().isBlank()) {
-                log.debug("Имя пользователя изменено на '{}'", user.getEmail());
-                oldUser.setName(user.getEmail());
-            } else {
-                log.debug("Имя пользователя изменено на '{}'", user.getName());
-                oldUser.setName(user.getName());
-            }
+    public void removeFriend(Long userId, Long friendId) {
+        log.info("Попытка удалить друга с ID {} для пользователя с ID {}", friendId, userId);
+
+        Set<Long> friends = userStorage.findUserById(userId).getFriends();
+        if (!friends.contains(friendId)) {
+            log.warn("Пользователь с ID {} не является другом пользователя с ID {}", friendId, userId);
         }
 
-        if (user.getEmail() != null && !user.getEmail().equals(oldUser.getEmail())) {
-            for (User u : users) {
-                if (u.getEmail().equals(user.getEmail())) {
-                    log.error("Данный email: {} уже зарегистрирован", user.getEmail());
-                    throw new AlreadyExistsException("Пользователь с таким email уже существует");
-                }
-            }
-            log.debug("Email пользователя изменён с '{}' на '{}'", oldUser.getEmail(), user.getEmail());
-            oldUser.setEmail(user.getEmail());
-        }
+        friends.remove(friendId);
+        userStorage.findUserById(userId).setFriends(friends);
 
-        if (user.getLogin() != null && !user.getLogin().equals(oldUser.getLogin())) {
-            for (User u : users) {
-                if (u.getLogin().equals(user.getLogin())) {
-                    log.error("Данный логин {} уже зарегистрирован", user.getLogin());
-                    throw new AlreadyExistsException("Пользователь с таким логином уже существует");
-                }
-            }
-            log.debug("Логин пользователя изменён с '{}' на '{}'", oldUser.getLogin(), user.getLogin());
-            oldUser.setLogin(user.getLogin());
-        }
-        log.info("Пользователь с id: {} успешно обновлён", user.getId());
-        return oldUser;
+        Set<Long> friendOfFriend = userStorage.findUserById(friendId).getFriends();
+        friendOfFriend.remove(userId);
+        userStorage.findUserById(friendId).setFriends(friendOfFriend);
+
+        log.info("Пользователь с ID {} больше не является другом пользователя с ID {}", userId, friendId);
+    }
+
+    public List<User> getMutualFriends(Long userId, Long friendId) {
+        log.info("Запрос на получение общих друзей между пользователями с ID {} и ID {}", userId, friendId);
+
+        Set<Long> mutualFriends = new HashSet<>(userStorage.findUserById(userId).getFriends());
+        mutualFriends.retainAll(userStorage.findUserById(friendId).getFriends());
+
+        List<User> mutualFriendsList = userStorage.findAllFriend(mutualFriends);
+
+        log.info("Пользователи с ID {} и ID {} имеют {} общих друзей", userId, friendId, mutualFriendsList.size());
+        return mutualFriendsList;
     }
 }

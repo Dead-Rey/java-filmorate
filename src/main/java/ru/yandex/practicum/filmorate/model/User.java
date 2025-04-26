@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 import ru.yandex.practicum.filmorate.validator.NoSpaces;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -31,6 +33,8 @@ public class User {
 
     @PastOrPresent
     private LocalDate birthday;
+
+    private Set<Long> friends = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
