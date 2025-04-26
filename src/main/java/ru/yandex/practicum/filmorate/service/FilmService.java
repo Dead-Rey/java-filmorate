@@ -1,9 +1,11 @@
 package ru.yandex.practicum.filmorate.service;
 
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exeption.AlreadyExistsException;
 import ru.yandex.practicum.filmorate.exeption.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -18,6 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Slf4j
+@Validated
 public class FilmService {
 
     private final FilmStorage filmStorage;
@@ -63,7 +66,7 @@ public class FilmService {
         log.info("Лайк от пользователя с ID {} успешно удалён у фильма с ID {}", userId, filmId);
     }
 
-    public List<Film> getTenPopularFilms(int count) {
+    public List<Film> getTenPopularFilms(@Positive int count) {
         log.info("Запрос на получение {} популярных фильмов", count);
 
         List<Film> films = filmStorage.getFilms();

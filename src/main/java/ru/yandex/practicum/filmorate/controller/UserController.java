@@ -1,7 +1,9 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -12,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/users")
 @AllArgsConstructor
+@Validated
 public class UserController {
 
     private final UserStorage userStorage;
@@ -33,29 +36,29 @@ public class UserController {
     }
 
     @GetMapping("{id}")
-    public User getUser(@PathVariable Long id) {
+    public User getUser(@PathVariable @Positive Long id) {
         return userStorage.findUserById(id);
     }
 
     @PutMapping("{id}/friends/{friendId}")
-    public List<User> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public List<User> addFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
         userService.addFriend(id, friendId);
         return userStorage.findAllFriend(userStorage.findUserById(id).getFriends());
     }
 
     @DeleteMapping("{id}/friends/{friendId}")
-    public List<User> deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    public List<User> deleteFriend(@PathVariable @Positive Long id, @PathVariable @Positive Long friendId) {
         userService.removeFriend(id, friendId);
         return userStorage.findAllFriend(userStorage.findUserById(id).getFriends());
     }
 
     @GetMapping("{id}/friends")
-    public List<User> getFriends(@PathVariable Long id) {
+    public List<User> getFriends(@PathVariable @Positive Long id) {
         return userStorage.findAllFriend(userStorage.findUserById(id).getFriends());
     }
 
     @GetMapping("{id}/friends/common/{otherId}")
-    public List<User> getFriendsCommon(@PathVariable Long id, @PathVariable Long otherId) {
+    public List<User> getFriendsCommon(@PathVariable @Positive Long id, @PathVariable @Positive Long otherId) {
         return userService.getMutualFriends(id, otherId);
     }
 }
