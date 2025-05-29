@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class UserController {
+
     private final UserServiceDb userService;
 
     @GetMapping
