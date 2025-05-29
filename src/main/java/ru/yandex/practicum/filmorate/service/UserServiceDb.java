@@ -132,6 +132,7 @@ public class UserServiceDb implements UserService {
         storage.save(oldUser);
         return oldUser;
     }
+
     @Override
     public List<User> getUsers() {
         return storage.findAllUsers();

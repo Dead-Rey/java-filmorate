@@ -172,6 +172,7 @@ public class FilmJdbcStorage implements FilmStorage {
             jdbcTemplate.update("INSERT INTO film_likes(film_id, user_id) VALUES (?, ?)", film.getId(), userId);
         }
     }
+
     @Override
     public boolean existsById(Long id) {
         String sql = "SELECT COUNT(*) FROM films WHERE id = ?";
