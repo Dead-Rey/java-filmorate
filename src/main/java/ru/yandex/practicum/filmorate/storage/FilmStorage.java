@@ -1,8 +1,12 @@
 package ru.yandex.practicum.filmorate.storage;
 
+
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.List;
+import java.util.Optional;
+
 
 public interface FilmStorage {
 
@@ -14,4 +18,10 @@ public interface FilmStorage {
 
      Film getFilmById(Long id);
 
+     boolean existsById(Long id); // добавлено
+
+     List<Film> getAllFilms();
+
+
+     Optional<Mpa> getMpaById(Integer id);
 }

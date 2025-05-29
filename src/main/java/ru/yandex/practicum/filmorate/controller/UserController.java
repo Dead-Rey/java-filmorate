@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserServiceDb;
-
 import java.util.List;
 
 @RestController
@@ -15,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Validated
 public class UserController {
-
     private final UserServiceDb userService;
 
     @GetMapping
@@ -29,8 +27,8 @@ public class UserController {
     }
 
     @PutMapping
-    public void updateUser(@Valid @RequestBody User user) {
-        userService.updateUser(user);
+    public User updateUser(@Valid @RequestBody User user) {
+       return userService.updateUser(user);
     }
 
     @GetMapping("{id}")
