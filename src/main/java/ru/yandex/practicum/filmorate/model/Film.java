@@ -17,9 +17,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Film {
-
-    private Set<Long> likes = new HashSet<>();
-
     private Long id;
 
     @NotBlank(message = "Название не может быть пустым или содержать только пробелы")
@@ -34,11 +31,22 @@ public class Film {
     @Positive(message = "Продолжительность должна быть положительным числом")
     private int duration;
 
+    private Set<Genre> genres = new HashSet<>();
+
+    private Mpa mpa;
+
+    private Set<Long> likes = new HashSet<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Film film = (Film) o;
         return Objects.equals(id, film.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
