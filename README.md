@@ -1,2 +1,2 @@
-# java-filmorate
-Template repository for Filmorate project.
+# Сервис для оценки фильмов
+Учебный проект для тренировки создания GRUD операций, JDBC, Spring 
